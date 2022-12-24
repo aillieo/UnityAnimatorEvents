@@ -1,0 +1,11 @@
+{
+  "name": "com.aillieo.unity-animator-events",
+  "displayName": "AillieoUtils UnityAnimatorEvents",
+  "description": "AillieoUtils UnityAnimatorEvents",
+  "version": "1.0.0",
+  "unity": "2020.3",
+  "license": "MIT",
+  "dependencies": {
+    "com.aillieo.easy-events": "https://github.com/aillieo/EasyEvent.git#upm"
+  }
+}
