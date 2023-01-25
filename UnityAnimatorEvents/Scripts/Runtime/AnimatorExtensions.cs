@@ -2,13 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
-namespace AillieoUtils
+namespace AillieoUtils.UnityAnimatorEvents
 {
     public static class AnimatorExtensions
     {
         public static Handle<int> ListenStateEnter(this Animator animator, int stateNameHash, Action callback)
         {
+            Assert.IsNotNull(animator);
+            Assert.IsNotNull(callback);
+
+            CheckStateAndEventDispatcher(animator, stateNameHash, 0);
+
             if (!animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
             {
                 animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
@@ -31,6 +37,11 @@ namespace AillieoUtils
 
         public static Handle<int> ListenStateExit(this Animator animator, int stateNameHash, Action callback)
         {
+            Assert.IsNotNull(animator);
+            Assert.IsNotNull(callback);
+
+            CheckStateAndEventDispatcher(animator, stateNameHash, 0);
+
             if (!animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
             {
                 animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
@@ -53,6 +64,11 @@ namespace AillieoUtils
 
         public static Handle<int> ListenStateEnterOnce(this Animator animator, int stateNameHash, Action callback)
         {
+            Assert.IsNotNull(animator);
+            Assert.IsNotNull(callback);
+
+            CheckStateAndEventDispatcher(animator, stateNameHash, 0);
+
             if (!animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
             {
                 animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
@@ -75,6 +91,11 @@ namespace AillieoUtils
 
         public static Handle<int> ListenStateExitOnce(this Animator animator, int stateNameHash, Action callback)
         {
+            Assert.IsNotNull(animator);
+            Assert.IsNotNull(callback);
+
+            CheckStateAndEventDispatcher(animator, stateNameHash, 0);
+
             if (!animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
             {
                 animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
@@ -158,6 +179,24 @@ namespace AillieoUtils
             Handle<int> handle = ListenStateExitOnce(animator, stateName, onComplete);
             animator.CrossFadeInFixedTime(stateName, fixedTransitionDuration, layer, fixedTimeOffset, normalizedTransitionTime);
             return handle;
+        }
+
+        private static void CheckStateAndEventDispatcher(this Animator animator, int stateNameHash, int layer)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (!animator.HasState(layer, stateNameHash))
+            {
+                Debug.LogError($"No matching state found, so no event will invoke. Animator {animator.name}.", animator);
+                return;
+            }
+
+            AnimatorEventDispatcher animatorEventDispatcher = animator.GetBehaviour<AnimatorEventDispatcher>();
+            if (animatorEventDispatcher == null)
+            {
+                Debug.LogError($"No {nameof(AnimatorEventDispatcher)} found, so no event will invoke. Animator {animator.name}.", animator);
+                return;
+            }
+#endif
         }
     }
 }
