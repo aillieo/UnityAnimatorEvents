@@ -1,11 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Assertions;
+// -----------------------------------------------------------------------
+// <copyright file="AnimatorExtensions.cs" company="AillieoTech">
+// Copyright (c) AillieoTech. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
 
 namespace AillieoUtils.UnityAnimatorEvents
 {
+    using System;
+    using UnityEngine;
+    using UnityEngine.Assertions;
+
     public static class AnimatorExtensions
     {
         public static Handle<int> ListenStateEnter(this Animator animator, int stateNameHash, Action callback)
@@ -64,23 +68,14 @@ namespace AillieoUtils.UnityAnimatorEvents
 
         public static Handle<int> ListenStateEnterOnce(this Animator animator, int stateNameHash, Action callback)
         {
-            Assert.IsNotNull(animator);
-            Assert.IsNotNull(callback);
-
-            CheckStateAndEventDispatcher(animator, stateNameHash, 0);
-
-            if (!animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
+            Handle<int> handle = default;
+            handle = ListenStateExit(animator, stateNameHash, () =>
             {
-                animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
-            }
-
-            return animatorEventBridge.onStateEnter.ListenOnce(snh =>
-            {
-                if (snh == stateNameHash)
-                {
-                    callback();
-                }
+                handle.Unlisten();
+                callback();
             });
+
+            return handle;
         }
 
         public static Handle<int> ListenStateEnterOnce(this Animator animator, string stateName, Action callback)
@@ -91,23 +86,14 @@ namespace AillieoUtils.UnityAnimatorEvents
 
         public static Handle<int> ListenStateExitOnce(this Animator animator, int stateNameHash, Action callback)
         {
-            Assert.IsNotNull(animator);
-            Assert.IsNotNull(callback);
-
-            CheckStateAndEventDispatcher(animator, stateNameHash, 0);
-
-            if (!animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
+            Handle<int> handle = default;
+            handle = ListenStateEnter(animator, stateNameHash, () =>
             {
-                animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
-            }
-
-            return animatorEventBridge.onStateExit.ListenOnce(snh =>
-            {
-                if (snh == stateNameHash)
-                {
-                    callback();
-                }
+                handle.Unlisten();
+                callback();
             });
+
+            return handle;
         }
 
         public static Handle<int> ListenStateExitOnce(this Animator animator, string stateName, Action callback)
