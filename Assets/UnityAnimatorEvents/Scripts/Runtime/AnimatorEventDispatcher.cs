@@ -1,10 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// -----------------------------------------------------------------------
+// <copyright file="AnimatorEventDispatcher.cs" company="AillieoTech">
+// Copyright (c) AillieoTech. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
 
 namespace AillieoUtils.UnityAnimatorEvents
 {
+    using UnityEngine;
+
     internal class AnimatorEventDispatcher : StateMachineBehaviour
     {
         private AnimatorEventBridge animatorEventBridge;
@@ -13,27 +16,27 @@ namespace AillieoUtils.UnityAnimatorEvents
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
 
-            if (animatorEventBridge == null)
+            if (this.animatorEventBridge == null)
             {
-                animatorEventBridge = animator.gameObject.GetComponent<AnimatorEventBridge>();
+                this.animatorEventBridge = animator.gameObject.GetComponent<AnimatorEventBridge>();
             }
 
-            if (animatorEventBridge != null)
+            if (this.animatorEventBridge != null)
             {
-                animatorEventBridge.onStateEnter.Invoke(stateInfo.shortNameHash);
+                this.animatorEventBridge.onStateEnter.Invoke(stateInfo.shortNameHash);
             }
         }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (animatorEventBridge == null)
+            if (this.animatorEventBridge == null)
             {
-                animatorEventBridge = animator.gameObject.GetComponent<AnimatorEventBridge>();
+                this.animatorEventBridge = animator.gameObject.GetComponent<AnimatorEventBridge>();
             }
 
-            if (animatorEventBridge != null)
+            if (this.animatorEventBridge != null)
             {
-                animatorEventBridge.onStateExit.Invoke(stateInfo.shortNameHash);
+                this.animatorEventBridge.onStateExit.Invoke(stateInfo.shortNameHash);
             }
 
             base.OnStateExit(animator, stateInfo, layerIndex);

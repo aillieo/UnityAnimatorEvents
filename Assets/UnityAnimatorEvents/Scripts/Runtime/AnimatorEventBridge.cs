@@ -1,10 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// -----------------------------------------------------------------------
+// <copyright file="AnimatorEventBridge.cs" company="AillieoTech">
+// Copyright (c) AillieoTech. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
 
 namespace AillieoUtils.UnityAnimatorEvents
 {
+    using UnityEngine;
+
     [RequireComponent(typeof(Animator))]
     [DisallowMultipleComponent]
     internal class AnimatorEventBridge : MonoBehaviour
@@ -14,8 +17,8 @@ namespace AillieoUtils.UnityAnimatorEvents
 
         private void OnDestroy()
         {
-            onStateEnter.RemoveAllListeners();
-            onStateExit.RemoveAllListeners();
+            this.onStateEnter.RemoveAllListeners();
+            this.onStateExit.RemoveAllListeners();
         }
     }
 }
