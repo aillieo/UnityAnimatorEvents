@@ -2,7 +2,7 @@
     "name": "AillieoUtils.UnityAnimatorEvents",
     "rootNamespace": "",
     "references": [
-        "AillieoUtils.EasyEvents"
+        "AillieoUtils.EasyEvent"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

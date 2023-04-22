@@ -10,9 +10,19 @@ namespace AillieoUtils.UnityAnimatorEvents
     using UnityEngine;
     using UnityEngine.Assertions;
 
+    /// <summary>
+    /// Extension methods for <see cref="Animator"/>.
+    /// </summary>
     public static class AnimatorExtensions
     {
-        public static Handle<int> ListenStateEnter(this Animator animator, int stateNameHash, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator enters a state.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateEnter(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> callback)
         {
             Assert.IsNotNull(animator);
             Assert.IsNotNull(callback);
@@ -24,22 +34,36 @@ namespace AillieoUtils.UnityAnimatorEvents
                 animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
             }
 
-            return animatorEventBridge.onStateEnter.AddListener(snh =>
+            return animatorEventBridge.onStateEnter.AddListener(asi =>
             {
-                if (snh == stateNameHash)
+                if (asi.shortNameHash == stateNameHash)
                 {
-                    callback();
+                    callback(asi);
                 }
             });
         }
 
-        public static Handle<int> ListenStateEnter(this Animator animator, string stateName, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator enters a state.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The name of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateEnter(this Animator animator, string stateName, Action<AnimatorStateInfo> callback)
         {
-            int stateNameHash = Animator.StringToHash(stateName);
+            var stateNameHash = Animator.StringToHash(stateName);
             return ListenStateEnter(animator, stateNameHash, callback);
         }
 
-        public static Handle<int> ListenStateExit(this Animator animator, int stateNameHash, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator exits a state.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateExit(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> callback)
         {
             Assert.IsNotNull(animator);
             Assert.IsNotNull(callback);
@@ -51,57 +75,96 @@ namespace AillieoUtils.UnityAnimatorEvents
                 animatorEventBridge = animator.gameObject.AddComponent<AnimatorEventBridge>();
             }
 
-            return animatorEventBridge.onStateExit.AddListener(snh =>
+            return animatorEventBridge.onStateExit.AddListener(asi =>
             {
-                if (snh == stateNameHash)
+                if (asi.shortNameHash == stateNameHash)
                 {
-                    callback();
+                    callback(asi);
                 }
             });
         }
 
-        public static Handle<int> ListenStateExit(this Animator animator, string stateName, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator exits a state.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The name of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateExit(this Animator animator, string stateName, Action<AnimatorStateInfo> callback)
         {
-            int stateNameHash = Animator.StringToHash(stateName);
+            var stateNameHash = Animator.StringToHash(stateName);
             return ListenStateExit(animator, stateNameHash, callback);
         }
 
-        public static Handle<int> ListenStateEnterOnce(this Animator animator, int stateNameHash, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator enters a state and invoke only once.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateEnterOnce(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> callback)
         {
-            Handle<int> handle = default;
-            handle = ListenStateExit(animator, stateNameHash, () =>
+            EventHandle handle = default;
+            handle = ListenStateExit(animator, stateNameHash, asi =>
             {
                 handle.Unlisten();
-                callback();
+                callback(asi);
             });
 
             return handle;
         }
 
-        public static Handle<int> ListenStateEnterOnce(this Animator animator, string stateName, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator enters a state and invoke only once.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The name of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateEnterOnce(this Animator animator, string stateName, Action<AnimatorStateInfo> callback)
         {
-            int stateNameHash = Animator.StringToHash(stateName);
+            var stateNameHash = Animator.StringToHash(stateName);
             return ListenStateEnterOnce(animator, stateNameHash, callback);
         }
 
-        public static Handle<int> ListenStateExitOnce(this Animator animator, int stateNameHash, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator exits a state and invoke only once.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateExitOnce(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> callback)
         {
-            Handle<int> handle = default;
-            handle = ListenStateEnter(animator, stateNameHash, () =>
+            EventHandle handle = default;
+            handle = ListenStateEnter(animator, stateNameHash, asi =>
             {
                 handle.Unlisten();
-                callback();
+                callback(asi);
             });
 
             return handle;
         }
 
-        public static Handle<int> ListenStateExitOnce(this Animator animator, string stateName, Action callback)
+        /// <summary>
+        /// Register a callback to the event when the animator exits a state and invoke only once.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The name of the state.</param>
+        /// <param name="callback">The callback function.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle ListenStateExitOnce(this Animator animator, string stateName, Action<AnimatorStateInfo> callback)
         {
-            int stateNameHash = Animator.StringToHash(stateName);
+            var stateNameHash = Animator.StringToHash(stateName);
             return ListenStateExitOnce(animator, stateNameHash, callback);
         }
 
+        /// <summary>
+        /// Remove all the listeners registered to the <see cref="Animator"/> ever.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
         public static void RemoveAllEventListeners(this Animator animator)
         {
             if (animator.gameObject.TryGetComponent(out AnimatorEventBridge animatorEventBridge))
@@ -111,58 +174,134 @@ namespace AillieoUtils.UnityAnimatorEvents
             }
         }
 
-        public static Handle<int> Play(this Animator animator, string stateName, Action onComplete, int layer = -1, float normalizedTime = float.NegativeInfinity)
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="normalizedTime">The time offset between zero and one.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle Play(this Animator animator, string stateName, Action onEnd, int layer = -1, float normalizedTime = float.NegativeInfinity)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateName, onComplete);
+            return Play(animator, stateName, _ => onEnd(), layer, normalizedTime);
+        }
+
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="normalizedTime">The time offset between zero and one.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle Play(this Animator animator, string stateName, Action<AnimatorStateInfo> onEnd, int layer = -1, float normalizedTime = float.NegativeInfinity)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
             animator.Play(stateName, layer, normalizedTime);
             return handle;
         }
 
-        public static Handle<int> Play(this Animator animator, int stateNameHash, Action onComplete, int layer = -1, float normalizedTime = float.NegativeInfinity)
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The state hash name. If stateNameHash is 0, it changes the current state time.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="normalizedTime">The time offset between zero and one.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle Play(this Animator animator, int stateNameHash, Action onEnd, int layer = -1, float normalizedTime = float.NegativeInfinity)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateNameHash, onComplete);
+            return Play(animator, stateNameHash, _ => onEnd(), layer, normalizedTime);
+        }
+
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The state hash name. If stateNameHash is 0, it changes the current state time.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="normalizedTime">The time offset between zero and one.</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
+        public static EventHandle Play(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> onEnd, int layer = -1, float normalizedTime = float.NegativeInfinity)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
             animator.Play(stateNameHash, layer, normalizedTime);
             return handle;
         }
 
-        public static Handle<int> PlayInFixedTime(this Animator animator, string stateName, Action onComplete, int layer = -1, float fixedTime = float.NegativeInfinity)
+        public static EventHandle PlayInFixedTime(this Animator animator, string stateName, Action onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateName, onComplete);
+            return PlayInFixedTime(animator, stateName, _ => onEnd(), layer, fixedTime);
+        }
+
+        public static EventHandle PlayInFixedTime(this Animator animator, string stateName, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
             animator.PlayInFixedTime(stateName, layer, fixedTime);
             return handle;
         }
 
-        public static Handle<int> PlayInFixedTime(this Animator animator, int stateNameHash, Action onComplete, int layer = -1, float fixedTime = float.NegativeInfinity)
+        public static EventHandle PlayInFixedTime(this Animator animator, int stateNameHash, Action onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateNameHash, onComplete);
+            return PlayInFixedTime(animator, stateNameHash, _ => onEnd(), layer, fixedTime);
+        }
+
+        public static EventHandle PlayInFixedTime(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
             animator.PlayInFixedTime(stateNameHash, layer, fixedTime);
             return handle;
         }
 
-        public static Handle<int> CrossFade(this Animator animator, int stateNameHash, float normalizedTransitionDuration, Action onComplete, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        public static EventHandle CrossFade(this Animator animator, int stateNameHash, float normalizedTransitionDuration, Action onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateNameHash, onComplete);
+            return CrossFade(animator, stateNameHash, normalizedTransitionDuration, _ => onEnd(), layer, normalizedTimeOffset, normalizedTransitionTime);
+        }
+
+        public static EventHandle CrossFade(this Animator animator, int stateNameHash, float normalizedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
             animator.CrossFade(stateNameHash, normalizedTransitionDuration, layer, normalizedTimeOffset, normalizedTransitionTime);
             return handle;
         }
 
-        public static Handle<int> CrossFade(this Animator animator, string stateName, float normalizedTransitionDuration, Action onComplete, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        public static EventHandle CrossFade(this Animator animator, string stateName, float normalizedTransitionDuration, Action onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateName, onComplete);
+            return CrossFade(animator, stateName, normalizedTransitionDuration, _ => onEnd(), layer, normalizedTimeOffset, normalizedTransitionTime);
+        }
+
+        public static EventHandle CrossFade(this Animator animator, string stateName, float normalizedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
             animator.CrossFade(stateName, normalizedTransitionDuration, layer, normalizedTimeOffset, normalizedTransitionTime);
             return handle;
         }
 
-        public static Handle<int> CrossFadeInFixedTime(this Animator animator, int stateNameHash, float fixedTransitionDuration, Action onComplete, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        public static EventHandle CrossFadeInFixedTime(this Animator animator, int stateNameHash, float fixedTransitionDuration, Action onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateNameHash, onComplete);
+            return CrossFadeInFixedTime(animator, stateNameHash, fixedTransitionDuration, _ => onEnd(), layer, fixedTimeOffset, normalizedTransitionTime);
+        }
+
+        public static EventHandle CrossFadeInFixedTime(this Animator animator, int stateNameHash, float fixedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
             animator.CrossFadeInFixedTime(stateNameHash, fixedTransitionDuration, layer, fixedTimeOffset, normalizedTransitionTime);
             return handle;
         }
 
-        public static Handle<int> CrossFadeInFixedTime(this Animator animator, string stateName, float fixedTransitionDuration, Action onComplete, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        public static EventHandle CrossFadeInFixedTime(this Animator animator, string stateName, float fixedTransitionDuration, Action onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
-            Handle<int> handle = ListenStateExitOnce(animator, stateName, onComplete);
+            return CrossFadeInFixedTime(animator, stateName, fixedTransitionDuration, _ => onEnd(), layer, fixedTimeOffset, normalizedTransitionTime);
+        }
+
+        public static EventHandle CrossFadeInFixedTime(this Animator animator, string stateName, float fixedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
+        {
+            EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
             animator.CrossFadeInFixedTime(stateName, fixedTransitionDuration, layer, fixedTimeOffset, normalizedTransitionTime);
             return handle;
         }

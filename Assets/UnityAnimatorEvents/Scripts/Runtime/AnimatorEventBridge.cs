@@ -12,8 +12,8 @@ namespace AillieoUtils.UnityAnimatorEvents
     [DisallowMultipleComponent]
     internal class AnimatorEventBridge : MonoBehaviour
     {
-        internal Event<int> onStateEnter = new Event<int>();
-        internal Event<int> onStateExit = new Event<int>();
+        internal EasyDelegate<AnimatorStateInfo> onStateEnter = new EasyDelegate<AnimatorStateInfo>();
+        internal EasyDelegate<AnimatorStateInfo> onStateExit = new EasyDelegate<AnimatorStateInfo>();
 
         private void OnDestroy()
         {
