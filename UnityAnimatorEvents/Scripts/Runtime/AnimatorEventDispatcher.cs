@@ -23,7 +23,7 @@ namespace AillieoUtils.UnityAnimatorEvents
 
             if (this.animatorEventBridge != null)
             {
-                this.animatorEventBridge.onStateEnter.Invoke(stateInfo.shortNameHash);
+                this.animatorEventBridge.onStateEnter.Invoke(stateInfo);
             }
         }
 
@@ -36,7 +36,7 @@ namespace AillieoUtils.UnityAnimatorEvents
 
             if (this.animatorEventBridge != null)
             {
-                this.animatorEventBridge.onStateExit.Invoke(stateInfo.shortNameHash);
+                this.animatorEventBridge.onStateExit.Invoke(stateInfo);
             }
 
             base.OnStateExit(animator, stateInfo, layerIndex);
