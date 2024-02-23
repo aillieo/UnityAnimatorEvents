@@ -107,7 +107,7 @@ namespace AillieoUtils.UnityAnimatorEvents
         public static EventHandle ListenStateEnterOnce(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> callback)
         {
             EventHandle handle = default;
-            handle = ListenStateExit(animator, stateNameHash, asi =>
+            handle = ListenStateEnter(animator, stateNameHash, asi =>
             {
                 handle.Unlisten();
                 callback(asi);
@@ -139,7 +139,7 @@ namespace AillieoUtils.UnityAnimatorEvents
         public static EventHandle ListenStateExitOnce(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> callback)
         {
             EventHandle handle = default;
-            handle = ListenStateEnter(animator, stateNameHash, asi =>
+            handle = ListenStateExit(animator, stateNameHash, asi =>
             {
                 handle.Unlisten();
                 callback(asi);
@@ -234,11 +234,29 @@ namespace AillieoUtils.UnityAnimatorEvents
             return handle;
         }
 
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="fixedTime">The time offset (in seconds).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle PlayInFixedTime(this Animator animator, string stateName, Action onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
         {
             return PlayInFixedTime(animator, stateName, _ => onEnd(), layer, fixedTime);
         }
 
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="fixedTime">The time offset (in seconds).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle PlayInFixedTime(this Animator animator, string stateName, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
         {
             EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
@@ -246,11 +264,29 @@ namespace AillieoUtils.UnityAnimatorEvents
             return handle;
         }
 
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The state hash name. If stateNameHash is 0, it changes the current state time.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="fixedTime">The time offset (in seconds).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle PlayInFixedTime(this Animator animator, int stateNameHash, Action onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
         {
             return PlayInFixedTime(animator, stateNameHash, _ => onEnd(), layer, fixedTime);
         }
 
+        /// <summary>
+        /// Plays a state and invoke the callback on play end.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The state hash name. If stateNameHash is 0, it changes the current state time.</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer index. If layer is -1, it plays the first state with the given state name or hash.</param>
+        /// <param name="fixedTime">The time offset (in seconds).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle PlayInFixedTime(this Animator animator, int stateNameHash, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTime = float.NegativeInfinity)
         {
             EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
@@ -258,11 +294,33 @@ namespace AillieoUtils.UnityAnimatorEvents
             return handle;
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using normalized times.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash name of the state.</param>
+        /// <param name="normalizedTransitionDuration">The duration of the transition (normalized).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="normalizedTimeOffset">The time of the state (normalized).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFade(this Animator animator, int stateNameHash, float normalizedTransitionDuration, Action onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             return CrossFade(animator, stateNameHash, normalizedTransitionDuration, _ => onEnd(), layer, normalizedTimeOffset, normalizedTransitionTime);
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using normalized times.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash name of the state.</param>
+        /// <param name="normalizedTransitionDuration">The duration of the transition (normalized).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="normalizedTimeOffset">The time of the state (normalized).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFade(this Animator animator, int stateNameHash, float normalizedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
@@ -270,11 +328,33 @@ namespace AillieoUtils.UnityAnimatorEvents
             return handle;
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using normalized times.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="normalizedTransitionDuration">The duration of the transition (normalized).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="normalizedTimeOffset">The time of the state (normalized).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFade(this Animator animator, string stateName, float normalizedTransitionDuration, Action onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             return CrossFade(animator, stateName, normalizedTransitionDuration, _ => onEnd(), layer, normalizedTimeOffset, normalizedTransitionTime);
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using normalized times.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="normalizedTransitionDuration">The duration of the transition (normalized).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="normalizedTimeOffset">The time of the state (normalized).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFade(this Animator animator, string stateName, float normalizedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float normalizedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
@@ -282,11 +362,33 @@ namespace AillieoUtils.UnityAnimatorEvents
             return handle;
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using times in seconds.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash name of the state.</param>
+        /// <param name="fixedTransitionDuration">The duration of the transition (in seconds).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="fixedTimeOffset">The time of the state (in seconds).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFadeInFixedTime(this Animator animator, int stateNameHash, float fixedTransitionDuration, Action onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             return CrossFadeInFixedTime(animator, stateNameHash, fixedTransitionDuration, _ => onEnd(), layer, fixedTimeOffset, normalizedTransitionTime);
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using times in seconds.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateNameHash">The hash name of the state.</param>
+        /// <param name="fixedTransitionDuration">The duration of the transition (in seconds).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="fixedTimeOffset">The time of the state (in seconds).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFadeInFixedTime(this Animator animator, int stateNameHash, float fixedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             EventHandle handle = ListenStateExitOnce(animator, stateNameHash, onEnd);
@@ -294,11 +396,33 @@ namespace AillieoUtils.UnityAnimatorEvents
             return handle;
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using times in seconds.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="fixedTransitionDuration">The duration of the transition (in seconds).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="fixedTimeOffset">The time of the state (in seconds).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFadeInFixedTime(this Animator animator, string stateName, float fixedTransitionDuration, Action onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             return CrossFadeInFixedTime(animator, stateName, fixedTransitionDuration, _ => onEnd(), layer, fixedTimeOffset, normalizedTransitionTime);
         }
 
+        /// <summary>
+        /// Creates a crossfade from the current state to any other state using times in seconds.
+        /// </summary>
+        /// <param name="animator">The <see cref="Animator"/> instance.</param>
+        /// <param name="stateName">The state name.</param>
+        /// <param name="fixedTransitionDuration">The duration of the transition (in seconds).</param>
+        /// <param name="onEnd">The callback on play end.</param>
+        /// <param name="layer">The layer where the crossfade occurs.</param>
+        /// <param name="fixedTimeOffset">The time of the state (in seconds).</param>
+        /// <param name="normalizedTransitionTime">The time of the transition (normalized).</param>
+        /// <returns>The <see cref="EventHandle"/> for this callback.</returns>
         public static EventHandle CrossFadeInFixedTime(this Animator animator, string stateName, float fixedTransitionDuration, Action<AnimatorStateInfo> onEnd, int layer = -1, float fixedTimeOffset = 0f, float normalizedTransitionTime = 0f)
         {
             EventHandle handle = ListenStateExitOnce(animator, stateName, onEnd);
